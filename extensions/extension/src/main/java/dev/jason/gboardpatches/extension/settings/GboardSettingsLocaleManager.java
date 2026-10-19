@@ -11,6 +11,7 @@ public final class GboardSettingsLocaleManager {
     public static final String LANGUAGE_SYSTEM = "system";
     public static final String LANGUAGE_ENGLISH = "en";
     public static final String LANGUAGE_TRADITIONAL_CHINESE = "zh-Hant";
+    public static final String LANGUAGE_BRAZILIAN_PORTUGUESE = "pt-BR";
 
     private GboardSettingsLocaleManager() {
     }
@@ -39,13 +40,15 @@ public final class GboardSettingsLocaleManager {
 
     public static String resolveEffectiveLanguageTag(String preferenceValue, Locale deviceLocale) {
         String normalizedPreference = normalizePreferenceValue(preferenceValue);
-        if (LANGUAGE_ENGLISH.equals(normalizedPreference)
-                || LANGUAGE_TRADITIONAL_CHINESE.equals(normalizedPreference)) {
+        if (!LANGUAGE_SYSTEM.equals(normalizedPreference)) {
             return normalizedPreference;
         }
         Locale locale = deviceLocale != null ? deviceLocale : Locale.getDefault();
         if (locale != null && isTraditionalChinese(locale)) {
             return LANGUAGE_TRADITIONAL_CHINESE;
+        }
+        if (locale != null && isPortuguese(locale)) {
+            return LANGUAGE_BRAZILIAN_PORTUGUESE;
         }
         if (locale != null && "en".equalsIgnoreCase(locale.getLanguage())) {
             return LANGUAGE_ENGLISH;
@@ -94,6 +97,9 @@ public final class GboardSettingsLocaleManager {
         if (LANGUAGE_TRADITIONAL_CHINESE.equals(languageTag)) {
             return Locale.forLanguageTag(LANGUAGE_TRADITIONAL_CHINESE);
         }
+        if (LANGUAGE_BRAZILIAN_PORTUGUESE.equals(languageTag)) {
+            return Locale.forLanguageTag(LANGUAGE_BRAZILIAN_PORTUGUESE);
+        }
         return Locale.ENGLISH;
     }
 
@@ -111,12 +117,19 @@ public final class GboardSettingsLocaleManager {
                 || "MO".equalsIgnoreCase(country);
     }
 
+    static boolean isPortuguese(Locale locale) {
+        return locale != null && "pt".equalsIgnoreCase(locale.getLanguage());
+    }
+
     private static String normalizePreferenceValue(String value) {
         if (LANGUAGE_ENGLISH.equals(value)) {
             return LANGUAGE_ENGLISH;
         }
         if (LANGUAGE_TRADITIONAL_CHINESE.equals(value)) {
             return LANGUAGE_TRADITIONAL_CHINESE;
+        }
+        if (LANGUAGE_BRAZILIAN_PORTUGUESE.equals(value)) {
+            return LANGUAGE_BRAZILIAN_PORTUGUESE;
         }
         return LANGUAGE_SYSTEM;
     }

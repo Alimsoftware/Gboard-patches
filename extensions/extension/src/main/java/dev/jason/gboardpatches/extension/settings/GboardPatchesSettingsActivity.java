@@ -2921,12 +2921,15 @@ public final class GboardPatchesSettingsActivity extends Activity
                         GboardSettingsText.get(context,
                                 R.string.gboard_patches_language_english_label),
                         GboardSettingsText.get(context,
-                                R.string.gboard_patches_language_traditional_chinese_label)
+                                R.string.gboard_patches_language_traditional_chinese_label),
+                        GboardSettingsText.get(context,
+                                R.string.gboard_patches_language_portuguese_br_label)
                 },
                 new String[] {
                         GboardSettingsLocaleManager.LANGUAGE_SYSTEM,
                         GboardSettingsLocaleManager.LANGUAGE_ENGLISH,
-                        GboardSettingsLocaleManager.LANGUAGE_TRADITIONAL_CHINESE
+                        GboardSettingsLocaleManager.LANGUAGE_TRADITIONAL_CHINESE,
+                        GboardSettingsLocaleManager.LANGUAGE_BRAZILIAN_PORTUGUESE
                 },
                 context == null
                         ? GboardSettingsLocaleManager.LANGUAGE_SYSTEM
@@ -2953,26 +2956,29 @@ public final class GboardPatchesSettingsActivity extends Activity
                 ? null
                 : GboardPatchesSettings.preferences(context);
         String preference = GboardSettingsLocaleManager.readLanguagePreference(preferences);
-        if (GboardSettingsLocaleManager.LANGUAGE_TRADITIONAL_CHINESE.equals(preference)) {
-            return GboardSettingsText.get(context,
-                    R.string.gboard_patches_language_traditional_chinese_label);
-        }
-        if (GboardSettingsLocaleManager.LANGUAGE_ENGLISH.equals(preference)) {
-            return GboardSettingsText.get(context,
-                    R.string.gboard_patches_language_english_label);
+        if (!GboardSettingsLocaleManager.LANGUAGE_SYSTEM.equals(preference)) {
+            return languageLabel(context, preference);
         }
         String effectiveLanguage = GboardSettingsLocaleManager.resolveEffectiveLanguageTag(
                 preference,
                 Locale.getDefault());
-        String effectiveLabel =
-                GboardSettingsLocaleManager.LANGUAGE_TRADITIONAL_CHINESE.equals(effectiveLanguage)
-                        ? GboardSettingsText.get(context,
-                                R.string.gboard_patches_language_traditional_chinese_label)
-                        : GboardSettingsText.get(context,
-                                R.string.gboard_patches_language_english_label);
+        String effectiveLabel = languageLabel(context, effectiveLanguage);
         return GboardSettingsText.format(context,
                 R.string.gboard_patches_language_system_value,
                 effectiveLabel);
+    }
+
+    private static String languageLabel(Context context, String languageTag) {
+        if (GboardSettingsLocaleManager.LANGUAGE_TRADITIONAL_CHINESE.equals(languageTag)) {
+            return GboardSettingsText.get(context,
+                    R.string.gboard_patches_language_traditional_chinese_label);
+        }
+        if (GboardSettingsLocaleManager.LANGUAGE_BRAZILIAN_PORTUGUESE.equals(languageTag)) {
+            return GboardSettingsText.get(context,
+                    R.string.gboard_patches_language_portuguese_br_label);
+        }
+        return GboardSettingsText.get(context,
+                R.string.gboard_patches_language_english_label);
     }
 
     private GboardPatchesSettingsContract.Screen buildFeatureErrorScreen(
