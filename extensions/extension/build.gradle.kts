@@ -203,7 +203,7 @@ val generateSettingsText = tasks.register("generateSettingsText") {
     outputs.dir(generatedSettingsTextJavaDir)
 
     doLast {
-        val requiredLocales = linkedSetOf("en", "zh-Hant")
+        val requiredLocales = linkedSetOf("en", "zh-Hant", "pt-BR")
         val documentBuilderFactory = DocumentBuilderFactory.newInstance().apply {
             setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
             setFeature("http://xml.org/sax/features/external-general-entities", false)
@@ -259,7 +259,11 @@ val generateSettingsText = tasks.register("generateSettingsText") {
         require(entries.isNotEmpty()) { "Settings text authority must not be empty" }
 
         val resRoot = generatedSettingsTextResDir.get().asFile
-        mapOf("en" to "values", "zh-Hant" to "values-b+zh+Hant").forEach { (locale, qualifier) ->
+        mapOf(
+            "en" to "values",
+            "zh-Hant" to "values-b+zh+Hant",
+            "pt-BR" to "values-b+pt+BR",
+        ).forEach { (locale, qualifier) ->
             val output = resRoot.resolve("$qualifier/gboard_settings_strings.xml")
             output.parentFile.mkdirs()
             output.writeText(buildString {
@@ -311,14 +315,20 @@ val generateSettingsText = tasks.register("generateSettingsText") {
             appendLine("    private static final Map<Integer, String> ENGLISH = createEnglish();")
             appendLine("    private static final Map<Integer, String> TRADITIONAL_CHINESE =")
             appendLine("            createTraditionalChinese();")
+            appendLine("    private static final Map<Integer, String> BRAZILIAN_PORTUGUESE =")
+            appendLine("            createBrazilianPortuguese();")
             appendLine()
             appendLine("    private GboardSettingsTextCatalog() {")
             appendLine("    }")
             appendLine()
             appendLine("    static String template(int resId, String languageTag) {")
-            appendLine("        return \"zh-Hant\".equals(languageTag)")
-            appendLine("                ? TRADITIONAL_CHINESE.get(resId)")
-            appendLine("                : ENGLISH.get(resId);")
+            appendLine("        if (\"zh-Hant\".equals(languageTag)) {")
+            appendLine("            return TRADITIONAL_CHINESE.get(resId);")
+            appendLine("        }")
+            appendLine("        if (\"pt-BR\".equals(languageTag)) {")
+            appendLine("            return BRAZILIAN_PORTUGUESE.get(resId);")
+            appendLine("        }")
+            appendLine("        return ENGLISH.get(resId);")
             appendLine("    }")
             appendLine()
             appendLine("    static String quantityTemplate(int resId, String languageTag, int quantity) {")
@@ -330,6 +340,13 @@ val generateSettingsText = tasks.register("generateSettingsText") {
                 append("        if (resId == R.plurals.")
                 append(entry.name)
                 appendLine(") {")
+                appendLine("            if (\"pt-BR\".equals(languageTag)) {")
+                append("                return quantity == 1 ? \"")
+                append(escapeJavaString(one.getValue("pt-BR")))
+                append("\" : \"")
+                append(escapeJavaString(other.getValue("pt-BR")))
+                appendLine("\";")
+                appendLine("            }")
                 append("            return \"zh-Hant\".equals(languageTag) ? \"")
                 append(escapeJavaString(other.getValue("zh-Hant")))
                 append("\" : quantity == 1 ? \"")
@@ -344,6 +361,7 @@ val generateSettingsText = tasks.register("generateSettingsText") {
             listOf(
                 "English" to "en",
                 "TraditionalChinese" to "zh-Hant",
+                "BrazilianPortuguese" to "pt-BR",
             ).forEach { (methodSuffix, locale) ->
                 appendLine()
                 append("    private static Map<Integer, String> create")

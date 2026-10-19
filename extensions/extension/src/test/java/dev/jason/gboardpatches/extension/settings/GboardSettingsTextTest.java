@@ -46,6 +46,15 @@ public final class GboardSettingsTextTest {
                 R.string.gboard_patches_custom_theme_source_chooser_title));
         Assert.assertEquals("選擇要匯入的主題", GboardSettingsText.get(context,
                 R.string.gboard_patches_custom_theme_choose_import));
+
+        GboardPatchesSettings.preferences(context).edit()
+                .putString(GboardPatchesSettings.PREF_KEY_SETTINGS_UI_LANGUAGE,
+                        GboardSettingsLocaleManager.LANGUAGE_BRAZILIAN_PORTUGUESE)
+                .commit();
+        Assert.assertEquals("Escolha a origem do tema", GboardSettingsText.get(context,
+                R.string.gboard_patches_custom_theme_source_chooser_title));
+        Assert.assertEquals("Escolha um tema para importar", GboardSettingsText.get(context,
+                R.string.gboard_patches_custom_theme_choose_import));
     }
 
     @Test
@@ -60,6 +69,11 @@ public final class GboardSettingsTextTest {
                 GboardSettingsText.resolveStableTextForTesting(
                         R.string.gboard_patches_header_title,
                         "zh-Hant"));
+        Assert.assertEquals(
+                "Configurações dos patches",
+                GboardSettingsText.resolveStableTextForTesting(
+                        R.string.gboard_patches_header_title,
+                        "pt-BR"));
     }
 
     @Test
@@ -76,6 +90,12 @@ public final class GboardSettingsTextTest {
                         R.string.gboard_patches_language_system_value,
                         "fr-FR",
                         "English"));
+        Assert.assertEquals(
+                "Padrão do sistema (Português (Brasil))",
+                GboardSettingsText.resolveStableTextForTesting(
+                        R.string.gboard_patches_language_system_value,
+                        "pt-PT",
+                        "Português (Brasil)"));
     }
 
     @Test
@@ -113,6 +133,18 @@ public final class GboardSettingsTextTest {
                         R.plurals.gboard_patches_minutes,
                         "zh-Hant",
                         2));
+        Assert.assertEquals(
+                "1 minuto",
+                GboardSettingsText.resolveStableQuantityForTesting(
+                        R.plurals.gboard_patches_minutes,
+                        "pt-BR",
+                        1));
+        Assert.assertEquals(
+                "2 minutos",
+                GboardSettingsText.resolveStableQuantityForTesting(
+                        R.plurals.gboard_patches_minutes,
+                        "pt-BR",
+                        2));
     }
 
     @Test
@@ -129,6 +161,9 @@ public final class GboardSettingsTextTest {
             Assert.assertNotNull(
                     field.getName() + " missing zh-Hant settings text",
                     GboardSettingsText.resolveStableTextForTesting(resId, "zh-Hant"));
+            Assert.assertNotNull(
+                    field.getName() + " missing pt-BR settings text",
+                    GboardSettingsText.resolveStableTextForTesting(resId, "pt-BR"));
         }
     }
 }

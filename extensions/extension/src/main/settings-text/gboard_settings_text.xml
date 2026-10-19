@@ -270,6 +270,11 @@
         <translation locale="zh-Hant">繁體中文</translation>
         <translation locale="pt-BR">Chinês tradicional</translation>
     </string>
+    <string name="gboard_patches_language_portuguese_br_label">
+        <translation locale="en">Portuguese (Brazil)</translation>
+        <translation locale="zh-Hant">葡萄牙文（巴西）</translation>
+        <translation locale="pt-BR">Português (Brasil)</translation>
+    </string>
     <string name="gboard_patches_language_system_value">
         <translation locale="en">System default (%1$s)</translation>
         <translation locale="zh-Hant">跟隨系統（%1$s）</translation>
